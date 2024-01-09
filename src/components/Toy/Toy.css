@@ -1,0 +1,22 @@
+.toy-section {
+    list-style-type: none;
+}
+
+.toy-section h2 {
+    display: inline;
+}
+
+.toys-container {
+    border-top: 2px solid lightblue;
+    padding: 1em 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.toy-section .controls {
+    display: flex;
+}
+
+.toy-section .controls button {
+    margin-right: 1em;
+}
