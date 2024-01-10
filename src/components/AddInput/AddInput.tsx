@@ -1,4 +1,5 @@
 import { useState } from "react";
+import './AddInput.css';
 
 interface AddInputProps {
     onSubmit: CallableFunction;
@@ -15,15 +16,15 @@ const AddInput = ({ onSubmit }:AddInputProps) => {
                     <h3>Ajouter un article</h3>
                     <div className="block">
                         <label htmlFor="label">Titre</label>
-                        <input type="text" name="label" id="label" />
+                        <input type="text" name="label" id="label" required />
                     </div>
                     <div className="block">
                         <label htmlFor="year">Année</label>
-                        <input type="number" min="1800" max="2024" step="1" placeholder="2010" name="year" id="year" />
+                        <input type="number" min="1800" max="2024" step="1" placeholder="2010" name="year" id="year" required />
                     </div>
                     <div className="block">
                         <label htmlFor="price">Prix</label>
-                        <input type="number" min="0.02" max="9999" step="0.01" name="price" id="price" placeholder="9.99" />
+                        <input type="number" min="0.02" max="9999" step="0.01" name="price" id="price" placeholder="9.99" required />
                     </div>
                     <button type="submit">Ajouter l'article</button>
                 </form>

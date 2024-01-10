@@ -5,18 +5,21 @@ import Toy from '../Toy/Toy';
 import ToyFetcher from '../../services/ToyFetcher';
 import SortInput from '../SortInput/SortInput';
 import AddInput from '../AddInput/AddInput';
+import FormHandleUtilities from '../../services/FormHandleUtilities';
+import CartFetcher from '../../services/CartFetcher';
+import CartArticle from '../CartArticle/CartArticle';
 
 function App() {
-  const [toys, setToys] = useState<ToyInterface[]>([
-    { id: 4, label: "Barbie fait de la bicyclette ", price: 9, year: "2012" },
-    { id: 5, label: "Kapla - boîte de 1000", price: 15, year: "2005" },
-    { id: 6, label: "Légo - boîte de 1000", price: 20, year: "2014"}
-  ]);
+  const [toys, setToys] = useState<ToyInterface[]>([]);
+  const [cartArticles, setCartArticles] = useState<ToyInterface[]>([]);
   const [sort, setSort] = useState<String>("label")
 
-  // à réactiver avec un json server fonctionnel
   useEffect(() => {
-    ToyFetcher.loadToys()
+    CartFetcher.loadCartArticles()
+      .then((loadedArticles: ToyInterface[]) => {
+        setCartArticles(loadedArticles);
+        return ToyFetcher.loadToys();
+      })
       .then((loadedToys: ToyInterface[]) => {
         setToys(loadedToys);
       })
@@ -29,18 +32,15 @@ function App() {
     }
   }
 
-  function onAddInputHandle(e:Event, form:HTMLFormElement): void {
-    const label = form.elements[0] as HTMLInputElement;
-    const year = form.elements[1] as HTMLInputElement;
-    const price = form.elements[2] as HTMLInputElement;
-    const art = { id: Math.trunc(Math.random()*1000000000), label: label.value, price: Number(price.value), year: year.value };
+  function onAddInputHandle(e: Event, form: HTMLFormElement): void {
+    const art = FormHandleUtilities.getToyFromForm(form, Math.trunc(Math.random() * 1000000000)) as ToyInterface;
     const copy = [...toys, art];
     e.preventDefault();
     ToyFetcher.postToy(art)
-    .then(() => {
-      setToys(copy);
-    })
-    .catch((e: Error) => { console.error(e); })
+      .then(() => {
+        setToys(copy);
+      })
+      .catch((e: Error) => { console.error(e); })
   }
 
   function onDeleteInputHandle(toy: ToyInterface): void {
@@ -58,25 +58,50 @@ function App() {
     }
   }
 
-  function onModifyInputHandle(toyPatch: Partial<ToyInterface>): void {
-    if (!toyPatch.id) return;
+  function onModifyInputHandle(e: Event, form: HTMLFormElement, toyId: number): void {
+    if (!toyId) return;
+    const toyPatch: Partial<ToyInterface> = FormHandleUtilities.getToyFromForm(form, toyId);
+    e.preventDefault();
     const copy = [...toys];
+    console.log(toyPatch);
     copy.forEach((toy) => {
       if (toyPatch.id === toy.id) {
-        if (toyPatch.label) toy.label = toyPatch.label;
-        if (toyPatch.price) toy.price = toyPatch.price;
-        if (toyPatch.year) toy.year = toyPatch.year;
+        toyPatch.label = (toyPatch.label) ? toyPatch.label : toy.label;
+        toyPatch.price = (toyPatch.price) ? toyPatch.price : toy.price;
+        toyPatch.year = (toyPatch.year) ? toyPatch.year : toy.year;
       }
     });
     setToys(copy);
-    
+    ToyFetcher.patchToy(toyId, toyPatch);
+  }
+
+  // Calcule le total du panier
+  function calculateCartTotal(): number {
+    if (cartArticles.length === 0) return 0;
+    return cartArticles.map((x:ToyInterface)=>x.price).reduce((pPrice, cPrice) => { return pPrice + cPrice; });
   }
 
   return (
-    <div className="App">
+    <main className="App">
       <h1>Digi Vivre Ensemble</h1>
-      <SortInput onChange={onSortInputChangeHandle} />
-      <AddInput onSubmit={onAddInputHandle} />
+      <section className='header-controls'>
+        <div>
+          <SortInput onChange={onSortInputChangeHandle} />
+          <AddInput onSubmit={onAddInputHandle} />
+        </div>
+        <aside className='cart'>
+          <h2>Votre Panier</h2>
+          <ul>
+            {cartArticles.sort((a: ToyInterface, b: ToyInterface) => {
+              return a.label.localeCompare(b.label);
+            }).map((toy: ToyInterface) =>
+              <CartArticle key={toy.id} toy={toy} />
+            )}
+            <p>Total : {calculateCartTotal()} €</p>
+          </ul>
+        </aside>
+      </section>
+      <h2 className='title'>Les jouets en vente</h2>
       <ul className="toys-container">
         {toys.sort((a: ToyInterface, b: ToyInterface): number => {
           switch (sort) {
@@ -88,10 +113,10 @@ function App() {
               return a.label.localeCompare(b.label);
           }
         }).map((toy: ToyInterface) =>
-          <Toy key={toy.id} toy={toy} onSuppr={() => {onDeleteInputHandle(toy)}} onModify={onModifyInputHandle} />
+          <Toy key={toy.id} toy={toy} onSuppr={() => { onDeleteInputHandle(toy) }} onModify={onModifyInputHandle} />
         )}
       </ul>
-    </div>
+    </main>
   );
 }
 

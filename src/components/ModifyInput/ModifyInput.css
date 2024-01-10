@@ -1,0 +1,11 @@
+.modify-input-wrapper form {
+  position: absolute;
+  background-color: whitesmoke;
+  padding: 1em;
+}
+
+.modify-input-wrapper form .block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

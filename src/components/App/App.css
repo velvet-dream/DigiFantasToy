@@ -1,15 +1,23 @@
 body {
     margin: 0;
-    padding: 0 2em;
+    background-color: white;
 }
 
-main {
+/* main {
     max-width: 60em;
     margin: auto;
+} */
+
+h1, h2, h3, h4 {
+    font-family: Georgia, 'Times New Roman', Times, serif
 }
 
 h1 {
     text-align: center;
+    font-size: 6em;
+    margin-top: 0;
+    padding: 0.2em;
+    background-color: lightblue;
 }
 
 button, input, select {
@@ -43,4 +51,23 @@ input[type=number]::-webkit-outer-spin-button {
 
 .block {
     display:block;
+}
+
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    padding: 2em;
+}
+
+/* Le panier */
+.header-controls .cart {
+    border: 2px solid lightblue;
+    width: 40%;
+    padding: 1em;
+    box-sizing: border-box;
+    background-color: azure;
+}
+
+.title {
+    padding-left: 2em;
 }

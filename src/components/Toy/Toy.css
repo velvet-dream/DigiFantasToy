@@ -1,16 +1,19 @@
 .toy-section {
     list-style-type: none;
+    margin: 1em;
 }
 
-.toy-section h2 {
+.toy-section h3 {
     display: inline;
 }
 
 .toys-container {
     border-top: 2px solid lightblue;
+    background-color: azure;
     padding: 1em 0;
     display: flex;
     justify-content: space-around;
+    flex-wrap: wrap;
 }
 
 .toy-section .controls {
