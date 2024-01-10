@@ -1,22 +1,22 @@
 import ToyInterface from "../interfaces/ToyInterface";
 
 export default class ToyFetcher {
-    static url: string = 'http://localhost:5500/toys';
+  static url: string = 'http://localhost:3001/toys';
 
-    static loadToys(): Promise<ToyInterface[]> {
-        return fetch(this.url)
-            .then((r: Response) => {
-                if (r.status === 200) return r.json();
-                else throw new Error("Server didn't response excpectedly. Error: " + r.status)
-            })
-            .then((toys: ToyInterface[]) => {
-                return toys;
-            })
-    }
+  static loadToys(): Promise<ToyInterface[]> {
+    return fetch(this.url)
+      .then((r: Response) => {
+        if (r.status === 200) return r.json();
+        else throw new Error("Server didn't response excpectedly. Error: " + r.status)
+      })
+      .then((toys: ToyInterface[]) => {
+        return toys;
+      })
+  }
 
-    /**
-   * Permet de modifier un article
-   */
+ /**
+  * Permet de modifier un article
+  */
   static patchToy(toyId: number, propertyToPatch: Partial<ToyInterface>): Promise<void> {
     return fetch(`${this.url}/${toyId}`,
       {
@@ -68,7 +68,7 @@ export default class ToyFetcher {
         if (r.status === 200) console.log("Deleted toy with response ", r)
         else throw new Error(`Invalid HTTP request response: ${r.status}`);
       })
-      .catch((e: Error): void =>  {
+      .catch((e: Error): void => {
         console.error(e);
       })
   }

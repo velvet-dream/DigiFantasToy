@@ -1,13 +1,17 @@
 import { useState } from "react";
 
-const AddInput = () => {
+interface AddInputProps {
+    onSubmit: CallableFunction;
+}
+
+const AddInput = ({ onSubmit }:AddInputProps) => {
     const [hidden, setHidden] = useState<Boolean>(true);
 
     return (
         <div className="controls" >
             <button onClick={() => { setHidden(!hidden) }}>{hidden ? "Ajouter un nouvel article" : "Masquer le formulaire"}</button>
             {!hidden &&
-                <form>
+                <form onSubmit={(e) => {onSubmit(e, e.target as HTMLFormElement); e.preventDefault()}}>
                     <h3>Ajouter un article</h3>
                     <div className="block">
                         <label htmlFor="label">Titre</label>
